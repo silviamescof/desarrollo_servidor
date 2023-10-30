@@ -1,0 +1,30 @@
+<!--Escriba un formulario de recogida de datos personales que conste de dos páginas.
+● En la primera página se solicitan la edad y el peso.
+● En la segunda página se muestran la edad y el peso indicados por el usuario o se
+informa de los errores cometidos.
+Notas:
+● En la segunda página se mostrará un aviso si la edad se deja vacía, si no se escribe
+un número, si no se escribe un número entero positivo o si se escribe un número
+que no esté comprendido entre 5 y 130.
+● En la segunda página se mostrará un aviso si el peso se deja vacía, si no se escribe
+un número o si se escribe un número que no esté comprendido entre 10 y 150.
+● La edad debe ser un número entero, pero el peso puede tener decimales.-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="Ejercicio9.php" method="POST">
+        <label for="edad">Edad </label>
+        <input type="text" name="edad"><br><br>
+
+        <label for="peso">Peso </label>
+        <input type="text" name="peso"><br><br>
+
+        <input type="submit">
+    </form>
+</body>
+</html>
