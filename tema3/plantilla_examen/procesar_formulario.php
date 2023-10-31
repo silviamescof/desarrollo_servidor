@@ -75,7 +75,9 @@ $valido=true;
                         <?php
                         //////////////////////////////////codigo aqui/////////////////////////////
                 if($_SERVER["REQUEST_METHOD"]=="POST"){
+                    
                     if(isset($_POST["validar"])){
+
                         if(empty($_POST["nombre"] || empty($_POST["apellido"]))){
                             echo "<p>no se puede dejar vacio el nombre, vuelve a realizar el formulario</p>";
                             $valido=false;
