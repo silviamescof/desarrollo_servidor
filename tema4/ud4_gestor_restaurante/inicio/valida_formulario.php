@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST"){
     };
 
     ///////////////lectura de datos limpios///////////////////
-    $errores = 'ERRORTYPE:: <br>';
+    $errores = 'ERROr::';
     $valido = true;
 
     $perfil = isset($_POST["perfil"]) ? limpiarDato($_POST["perfil"]) : "";
@@ -21,17 +21,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST"){
     ///////////////////verificacion de requisitos//////////////////////
     if($perfil == ""){
 
-        $errores = $errores.'-No se puede dejar vacío el tipo de perfil <br>';
+        $errores = $errores.'-No se puede dejar vacío el tipo de perfil.   ';
         $valido = false;
     };
     if($user == ""){
 
-        $errores = $errores.'-No se puede dejar vacío el usuario <br>';
+        $errores = $errores.'-No se puede dejar vacío el usuario';
         $valido = false;
     };
     if($pass == ""){
 
-        $errores = $errores.'-No se puede dejar vacía la contraseña <br>';
+        $errores = $errores.'-No se puede dejar vacía la contraseña ';
         $valido = false;
     };
     //////////// si analizados los datos, alguno no es valido(vacio), ya no se sigue gestionando, devuelve al inicio//////

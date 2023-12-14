@@ -40,10 +40,10 @@ $valor=isset($_POST["valor"]) ? limpiaDato($_POST["valor"])	: "";
                 include "../includes/conexion_bd.php";
 
             
-                $stm=$pdo->prepare("SELECT codprod,nombre,descripcion,peso,stock,categoria from productos where $criterio like :valor ");
+                $stm=$pdo->prepare("SELECT codprod,nombre,descripcion,peso,stock,categoria from productos where $criterio like :valor");
 
                 //echo 'acabo derealizar la conexion';
-
+				$valor='%'.$valor.'%';
                 $stm->bindParam(':valor', $valor);
 
                 //echo 'acabo de insertar '.$criterio.' y '.$valor.'En el prepared';

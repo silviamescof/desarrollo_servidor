@@ -4,6 +4,7 @@ session_start();
 if(!isset($_SESSION["usuario"])){
     header("Location:index.php");
 };
+    include_once  "../includes//conexion_bd.php";
     //variables del control de errores
     $hay_errores = "";
     $errores = false;
@@ -31,15 +32,11 @@ if(!isset($_SESSION["usuario"])){
 		//si el campo no esta vacio pasa al siguiente paso para eliminar la categoria
         if($hay_errores==false){
             try{
-				//conexión bd
-				$cadena_conexion = 'mysql:dbname=pedidos;host=127.0.0.1';
-				$usuario = 'root';
-				$clave = '';
-				$bd = new PDO($cadena_conexion, $usuario, $clave);
+			
 
 				//comprobamos que la categoría existe
 				$sql = "SELECT codcat, nombre, descripcion FROM categorias WHERE codcat = $id_categoria";
-				$resultado = $bd->query($sql);
+				$resultado = $pdo->query($sql);
 				if($resultado->rowCount()==0){
 					$hay_errores = "La categoría no existe";
 					$errores = true;
@@ -57,9 +54,12 @@ if(!isset($_SESSION["usuario"])){
 
 			}catch(PDOException $e){
 				echo "Se ha producido un error: <br> Error al conectar con la BD";
-			}
-        }
-    }
+			};
+        };
+    };
+
+    $stm=$pdo->prepare("select codcat, nombre from categorias");
+    $stm->execute();
 
 
 ?>
@@ -92,21 +92,7 @@ if(!isset($_SESSION["usuario"])){
 											<h1>Editar Categoría</h1>
 											<p>Gestión integral de pedidos, grupo de restaurantes.</p>
 										</header>
-										<p>Introduzca la ID de la categoría que desea modificar</p>
-										<!--AQUI EMPIEZA EL FORMULARIO-->
-                                        <form action="editar_categoria.php" method="POST">
-                                            <div class="row gtr-uniform">
-                                                <div class="col-6 col-12-xsmall">
-                                                    <input type="text" name="categoria" id="categoria" value="" placeholder="ID" />
-                                                </div>
-                                                <!-- Break -->
-                                                <div class="col-12">
-                                                    <ul class="actions">
-                                                        <li><input type="submit" value="Buscar" class="primary"/></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </form>
+										
                                         <!--FIN DEL FORMNULARIO-->
                                         <?php
                                             //salida info
@@ -121,15 +107,21 @@ if(!isset($_SESSION["usuario"])){
                                         <h2>Actualizar datos de Categoría</h2>
                                             <div class="row gtr-uniform">
                                                 <div class="col-6 col-12-xsmall">
-                                                    <label for="codigo">ID</label>
-                                                    <input type="text" name="codigo" id="actualizar" value="<?php echo $codigo; ?>"/>
+                                                    <label for="codigo">Seleccione categoria</label>
+                                                    <select name="codigo">
+                                                        <?php
+                                                            while($fila = $stm->fetch()){
+                                                                echo '<option id="actualizar" value="'.$fila["codcat"].'">'.$fila["nombre"].'</option>';
+                                                            };
+                                                        ?>
+                                                    </select>
                                                 </div>
                                                 <div class="col-6 col-12-xsmall">
-                                                    <label for="nombre">Nombre</label>
-                                                    <input type="text" name="nombre" id="actualizar" value="<?php echo $nombre; ?>"/>
+                                                    <label for="nombre">Nuevo Nombre</label>
+                                                    <input type="text" name="nombre" id="nombre"/>
                                                 </div>
                                                 <div class="col-6 col-12-xsmall">
-                                                    <label for="descripcion">Descripcion</label>
+                                                    <label for="descripcion">Nueva Descripcion</label>
                                                     <input type="text" name="descripcion" id="actualizar" value="<?php echo $descripcion; ?>"/>
                                                 </div>
                                                 <!-- Break -->

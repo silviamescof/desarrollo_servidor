@@ -44,21 +44,64 @@ session_start();
             $ciudad=isset($_POST["ciudad"]) ? limpiarDato($_POST["ciudad"]) : "";
             $direccion=isset($_POST["direccion"]) ? limpiarDato($_POST["direccion"]) : "";
 
+            if($correo==""){
+                $hay_errores.="El campo correo esta vacio <br>";
+                $errores = true;
+            }
+            if($clave==""){
+                $hay_errores.="El campo clave esta vacio <br>";
+                $errores = true;
+            }
+            if($confirmaClave==""){
+                $hay_errores.="El campo confirmaClave esta vacio <br>";
+                $errores = true;
+            }
+            if($pais==""){
+                $hay_errores.="El campo pais esta vacio <br>";
+                $errores = true;
+            }
+            if($cp==""){
+                $hay_errores.="El campo cp esta vacio <br>";
+                $errores = true;
+            }
+            if($ciudad==""){
+                $hay_errores.="El campo ciudad esta vacio <br>";
+                $errores = true;
+            }
+            if($direccion==""){
+                $hay_errores.="El campo direccion esta vacio <br>";
+                $errores = true;
+            }
+            if($clave!==$confirmaClave){
+                $hay_errores.="La contraseña y la confirmacion son distintas<br>";
+                $errores = true;
+            };
         
             //actualizar los datos en la tabla
-            try{
-                $pdo = new PDO("mysql:host=$host;dbname=pedidos;charset=utf8",$user,$pass);
-                $sentencia="UPDATE restaurantes SET correo='$correo', clave='$clave', pais='$pais', cp='$cp', ciudad='$ciudad', direccion='$direccion' WHERE correo='$correo'";
-                $stm=$pdo->prepare($sentencia);
-                $stm->execute();
-                $stm->setFetchMode(PDO::FETCH_ASSOC);
 
-                if($stm){
-                    $salida = "Se han actualizado los datos correctamente";
-                }
-            }catch(PDOException $e){
-                echo $e->getMessage();
+            if($errores==false){
+
+                try{
+                    $pdo = new PDO("mysql:host=$host;dbname=pedidos;charset=utf8",$user,$pass);
+                    $sentencia="UPDATE restaurantes SET correo = :correo, clave= :clave , pais= :pais, cp= :cp , ciudad= :ciudad , direccion=:direccion WHERE correo=:correo";
+                    $stm=$pdo->prepare($sentencia);
+                    $stm->bindParam(':correo',$correo);
+                    $stm->bindParam(':clave',$clave);
+                    $stm->bindParam(':pais',$pais);
+                    $stm->bindParam(':cp',$cp);
+                    $stm->bindParam(':ciudad',$ciudad);
+                    $stm->bindParam(':direccion',$direccion);
+                    $stm->execute();
+                    $stm->setFetchMode(PDO::FETCH_ASSOC);
+    
+                    if($stm->rowCount() >0){
+                        $salida = "Se han actualizado los datos correctamente";
+                    }
+                }catch(PDOException $e){
+                    echo $e->getMessage();
+                };
             };
+            
         };
 
         ///////////////////conexion a base de datos///////////////////////////
@@ -136,7 +179,17 @@ session_start();
                                             <div class="row gtr-uniform">
                                                 <div class="col-6 col-12-xsmall">
                                                     <label for="correo">Correo</label>
-                                                    <input type="text" name="correo" id="actualizar" value="<?php echo $correo; ?>" readonly >
+                                                    <?php
+                                                    if($_SESSION["perfil"]=="restaurante"){
+
+                                                        echo '<input type="text" name="correo" id="actualizar" value="'.$correo.'" readonly >';
+                
+                                                    }elseif($_SESSION["perfil"]=="administrador"){
+                
+                                                        echo '<input type="text" name="correo" id="actualizar" value="'.$correo.'">';
+                                                    };
+                                                    ?>
+                                                    
                                                 </div>
                                                 <div class="col-6 col-12-xsmall">
                                                 </div>
@@ -172,6 +225,7 @@ session_start();
                                                         <li>
                                                             <?php
                                                                 echo $salida;
+                                                                echo isset($hay_errores) ? $hay_errores : "";
                                                             ?>
                                                         </li>
                                                     </ul>

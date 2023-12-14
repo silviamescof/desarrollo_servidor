@@ -13,7 +13,8 @@
 
 	try{
 
-		$pdo = new PDO("mysql:host=$host;dbname=pedidos;charset=utf8",$user,$pass);
+		include_once "../includes/conexion_bd.php";
+		
 		$sentencia="SELECT * FROM categorias";
 		$stm=$pdo->prepare($sentencia);
 		

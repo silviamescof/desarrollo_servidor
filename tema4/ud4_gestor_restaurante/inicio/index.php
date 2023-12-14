@@ -44,6 +44,9 @@
 							<!-- Header -->
 								<header id="header">
 									<a href="index.html" class="logo"><h2>Gestor de pedidos</h2> </a>
+									<p class="errores">
+										<?php echo isset($_COOKIE["errores"]) ? $_COOKIE["errores"] : "";?>
+									</p>
 								</header>
 
 							<!-- Banner -->
@@ -72,6 +75,7 @@
 												</tr>
 												<tr>
 													<td><input name="enviar" value="enviar" type="submit"></td>
+													
 												</tr>
 													
 
@@ -83,9 +87,7 @@
 						</div>
 					</div>
 				</div>
-				<p class="errores">
-					<?php echo isset($_COOKIE["errores"]) ? $_COOKIE["errores"] : "";?>
-				</p>
+				
 				<p>
 					<?php 
 					

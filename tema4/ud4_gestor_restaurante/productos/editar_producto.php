@@ -4,62 +4,36 @@ session_start();
 	if(!isset($_SESSION["usuario"])){
 		header("Location:index.php");
 	};
+    include_once "../includes/conexion_bd.php";
+    
     //variables del control de errores
     $hay_errores = "";
     $errores = false;
     $salida = "";
 
-    //variable que almacenara los datos de la ID
-    $id_producto = "";
-
-    //variables del formulario
-    $nombre = "";
-    $descripcion = ""; 
-    $peso = ""; 
-    $stock = ""; 
-    $categoria = ""; 
-
-
     //si viene de post enlazamos conexión con BD
-    if($_SERVER["REQUEST_METHOD"]=="POST"){
-
-        //recogemos datos del formulario - comprobando primerp que el campo no esté vacío
-        if(!empty($_POST["categoria"])){
-            $id_producto = $_POST["categoria"];
-        }else{
-            $hay_errores = "El campo ID está vacío";
-            $errores = true;
-        }
+    
 		//si el campo no esta vacio pasa al siguiente paso para eliminar la categoria
-        if($hay_errores==false){
+     
             try{
-				//conexión bd
-				$cadena_conexion = 'mysql:dbname=pedidos;host=127.0.0.1';
-				$usuario = 'root';
-				$clave = '';
-				$bd = new PDO($cadena_conexion, $usuario, $clave);
-
+				
 				//comprobamos que la categoría existe
-				$sql = "SELECT codprod, nombre, descripcion, peso, stock, categoria FROM productos WHERE codprod = $id_producto";
-				$resultado = $bd->query($sql);
-				if($resultado->rowCount()==0){
-					$hay_errores = "La categoría no existe";
-					$errores = true;
-				}else{
-                    foreach ($resultado as $fila) {
-                        $id_producto = $fila['codprod'];
-                        $nombre = $fila['nombre'];
-                        $descripcion = $fila['descripcion'];
-                        $peso = $fila['peso'];
-                        $stock = $fila['stock'];
-                        $categoria = $fila['categoria'];
-                    }
-				}
+                $stm = $pdo->prepare("SELECT p.codprod, p.nombre, p.descripcion, p.peso, p.stock, p.categoria, c.codcat, c.nombre as nombrecate 
+                     FROM productos p
+                     INNER JOIN categorias c ON p.categoria = c.codcat
+                     GROUP BY p.codprod, p.nombre, p.descripcion, p.peso, p.stock, p.categoria, c.codcat, c.nombre");
+
+                $stm->execute();
+
+				$resultados = $stm->fetchAll(PDO::FETCH_ASSOC);
+				
+				
+
 			}catch(PDOException $e){
                 echo $e->getMessage();
 			}
-        }
-    }
+        
+    
 
 ?>
 <!DOCTYPE HTML>
@@ -92,20 +66,7 @@ session_start();
 											<p>Gestión integral de pedidos, grupo de restaurantes.</p>
 										</header>
 										<p>Introduzca la ID del producto que desea modificar</p>
-										<!--AQUI EMPIEZA EL FORMULARIO-->
-                                        <form action="editar_producto.php" method="POST">
-                                            <div class="row gtr-uniform">
-                                                <div class="col-6 col-12-xsmall">
-                                                    <input type="text" name="categoria" id="categoria" value="" placeholder="ID" />
-                                                </div>
-                                                <!-- Break -->
-                                                <div class="col-12">
-                                                    <ul class="actions">
-                                                        <li><input type="submit" value="Buscar" class="primary"/></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </form>
+										
                                         <!--FIN DEL FORMNULARIO-->
                                         <?php
                                             //salida info
@@ -119,29 +80,41 @@ session_start();
                                         <form action="procesar_editar_producto.php" method="POST">
                                         <h2>Actualizar datos de un Producto</h2>
                                             <div class="row gtr-uniform">
-                                                <div class="col-6 col-12-xsmall">
-                                                    <label for="codigo">ID</label>
-                                                    <input type="text" name="codigo" id="actualizar" value="<?php echo $id_producto; ?>"/>
+                                                <div class="col-6 col-12-xsmall"> 
+                                                    <label for="codigo">Seleccione categoria</label>
+                                                    <select name="codigo">
+                                                        <?php
+                                                            foreach ($resultados as $fila) {
+                                                                echo '<option id="actualizar" value="' . $fila["codprod"] . '">' . $fila["nombre"] . '</option>';
+                                                            }
+                                                        ?>
+                                                    </select>
                                                 </div>
                                                 <div class="col-6 col-12-xsmall">
-                                                    <label for="nombre">Nombre</label>
-                                                    <input type="text" name="nombre" id="actualizar" value="<?php echo $nombre; ?>"/>
+                                                    <label for="nombre">Nuevo Nombre</label>
+                                                    <input type="text" name="nombre" id="actualizar"/>
                                                 </div>
                                                 <div class="col-6 col-12-xsmall">
-                                                    <label for="descripcion">Descripcion</label>
-                                                    <input type="text" name="descripcion" id="actualizar" value="<?php echo $descripcion; ?>"/>
+                                                    <label for="descripcion">Nueva Descripcion</label>
+                                                    <input type="text" name="descripcion" id="actualizar"/>
                                                 </div>
                                                 <div class="col-6 col-12-xsmall">
-                                                    <label for="peso">Peso</label>
-                                                    <input type="number" name="peso" id="actualizar" value="<?php echo $peso; ?>"/>
+                                                    <label for="peso">Nuevo Peso</label>
+                                                    <input type="number" name="peso" id="actualizar"/>
                                                 </div>
                                                 <div class="col-6 col-12-xsmall">
-                                                    <label for="stock">Stock</label>
-                                                    <input type="number" name="stock" id="actualizar" value="<?php echo $stock; ?>"/>
+                                                    <label for="stock">Nuevo Stock</label>
+                                                    <input type="number" name="stock" id="actualizar"/>
                                                 </div>
                                                 <div class="col-6 col-12-xsmall">
-                                                    <label for="categoria">Categoría</label>
-                                                    <input type="number" name="categoria" id="actualizar" value="<?php echo $categoria; ?>"/>
+                                                    <label for="categoria">Nueva Categoría</label>
+                                                    <select name="codigo">
+                                                        <?php
+                                                            foreach ($resultados as $fila) {
+                                                                echo '<option id="actualizar" value="' . $fila["codcat"] . '">' . $fila["nombrecate"] . '</option>';
+                                                            }
+                                                        ?>
+                                                    </select>
                                                 </div>
                                                 <!-- Break -->
                                                 <div class="col-12">

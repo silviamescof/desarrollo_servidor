@@ -137,6 +137,7 @@ try{
 						<div class="inner">
 							<!-- Menu -->
 								<nav id="menu">
+									<!--La conexion no esta suplicada esto inluye un menu en funcion del tipo de usuario(restaurante o administrador)-->
 								<?php
 									if($_SESSION["perfil"]=="restaurante"){
 
