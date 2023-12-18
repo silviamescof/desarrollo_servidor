@@ -32,6 +32,10 @@ body {
 
 ol, ul {
   list-style: none; }
+.rutas{
+  width: 30%;
+  margin-left: 20%;
+}
 
 blockquote, q {
   quotes: none; }

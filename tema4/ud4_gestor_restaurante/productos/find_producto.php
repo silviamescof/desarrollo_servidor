@@ -40,7 +40,7 @@ $valor=isset($_POST["valor"]) ? limpiaDato($_POST["valor"])	: "";
                 include "../includes/conexion_bd.php";
 
             
-                $stm=$pdo->prepare("SELECT codprod,nombre,descripcion,peso,stock,categoria from productos where $criterio like :valor");
+                $stm=$pdo->prepare("SELECT codprod,nombre,descripcion,peso,stock,categoria,ruta from productos where $criterio like :valor");
 
                 //echo 'acabo derealizar la conexion';
 				$valor='%'.$valor.'%';
@@ -132,6 +132,7 @@ $valor=isset($_POST["valor"]) ? limpiaDato($_POST["valor"])	: "";
                                                 <td>Peso</td>
                                                 <td>Stock</td>
                                                 <td>Categoria</td>
+												<td>Imagen</td>
                                             </tr>
                                             <?php
                                             if(isset($stm)){
@@ -143,6 +144,7 @@ $valor=isset($_POST["valor"]) ? limpiaDato($_POST["valor"])	: "";
                                                     echo '<td>'.$fila[3].'</td>';
                                                     echo '<td>'.$fila[4].'</td>';
                                                     echo '<td>'.$fila[5].'</td>';
+													echo '<td><img class="rutas" src="..//imagenes_productos/'.$fila[6].'"></td>';
                                                     echo '</tr>';
                                                 };
                                             };

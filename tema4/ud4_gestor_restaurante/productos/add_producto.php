@@ -20,9 +20,35 @@ $descripcion=isset($_POST["descripcion"]) ? limpiaDato($_POST["descripcion"])	: 
 $peso=isset($_POST["peso"]) ? limpiaDato($_POST["peso"])	: "";
 $stock=isset($_POST["stock"]) ? limpiaDato($_POST["stock"])	: "";
 $categoria=isset($_REQUEST["categoria"]) ? limpiaDato($_REQUEST["categoria"]) : "";
+$imagen="";
+
+$allowedFileTypes = ['image/jpeg', 'image/png', 'application/pdf']; // Tipos de archivos permitidos
+
+if ($_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+
+    $uploadedFileType = $_FILES['imagen']['type'];
+	$nombreArchivo = $_FILES['imagen']['name'];
+
+    if (in_array($uploadedFileType, $allowedFileTypes)) {
+        // El tipo de archivo es válido, puedes procesar o mover el archivo.
+        move_uploaded_file($_FILES['imagen']['tmp_name'], '../imagenes_productos/'.$nombreArchivo.'');
+		
+		$imagen=$nombreArchivo;
+        echo 'Archivo subido exitosamente.';
+    } else {
+        echo 'Tipo de archivo no permitido.';
+    }
+} else {
+    echo 'Error al subir el archivo.';
+}
+
 
 
 	///////////////requisitos de nombre /////////////////
+if(empty($imagen)){
+	$errores=$errores.'<br> - No se ha cargado ninguna imagen .';
+	$valido=false;
+};
 
 if(empty($nombre)){
 	$errores=$errores.'<br> - El nombre está vacio.';
@@ -67,12 +93,13 @@ if(empty($categoria)){
 try{
 
 	include "../includes/conexion_bd.php";
-	$stm=$pdo->prepare("INSERT INTO productos (nombre, descripcion, peso,stock,categoria) values (:nombre, :descripcion, :peso, :stock, :categoria)");
+	$stm=$pdo->prepare("INSERT INTO productos (nombre, descripcion, peso,stock,categoria,ruta) values (:nombre, :descripcion, :peso, :stock, :categoria,:imagen)");
 	$stm->bindParam(':nombre',$nombre);
 	$stm->bindParam(':descripcion',$descripcion);
 	$stm->bindParam(':peso',$peso);
 	$stm->bindParam(':stock',$stock);
 	$stm->bindParam(':categoria',$categoria);
+	$stm->bindParam(':imagen',$imagen);
 
 	$stm->execute();
 	
@@ -138,7 +165,7 @@ $stm->execute();
 							<!-- Banner -->
 								<section id="formulario">
 									<div class="content">
-										<form action="add_producto.php" method="post">
+										<form action="add_producto.php" method="post" enctype="multipart/form-data">
 											<table>
 												<tr>
 													<td><label for="nombre">Nombre</label></td>
@@ -170,6 +197,10 @@ $stm->execute();
 													?>
 													</select>
 													</td>
+												</tr>
+												<tr>
+													<td><label for="imagen">Subir Imagen</label></td>
+													<td><input class="input" type="file" name="imagen" id="imagen"></td>
 												</tr>
 												<tr>
 													<td><input type="submit" name="addcategory"></td>
