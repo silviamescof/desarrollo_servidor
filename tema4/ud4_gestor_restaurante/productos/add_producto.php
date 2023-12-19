@@ -34,7 +34,7 @@ if ($_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
         move_uploaded_file($_FILES['imagen']['tmp_name'], '../imagenes_productos/'.$nombreArchivo.'');
 		
 		$imagen=$nombreArchivo;
-        echo 'Archivo subido exitosamente.';
+		
     } else {
         echo 'Tipo de archivo no permitido.';
     }
